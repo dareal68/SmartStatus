@@ -220,6 +220,11 @@ light_enable_interaction();
 
 }
 
+static void back_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
+
+sendCommandInt(SM_SCREEN_EXIT_KEY, STATUS_SCREEN_APP);
+
+}
 
 static void select_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
 
