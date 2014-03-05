@@ -129,8 +129,6 @@ void rcv(DictionaryIterator *received, void *context) {
 	Tuple *t;
 	int *val;
 
-
-
 	t=dict_find(received, SM_WEATHER_COND_KEY); 
 	if (t!=NULL) {
 		memcpy(weather_cond_str, t->value->cstring, strlen(t->value->cstring));
@@ -216,34 +214,95 @@ void rcv(DictionaryIterator *received, void *context) {
 
 }
 
+static void back_click_handler(ClickRecognizerRef recognizer, void *context) {
+
+light_enable_interaction();
+
+}
+
+
+static void select_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
+
+}
+
+static void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+
+ switch (active_layer) {
+  case MUSIC_LAYER :
+   sendCommand(SM_PLAYPAUSE_KEY);
+ }
+}
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 
-	ani_out = property_animation_create_layer_frame(animated_layer[active_layer], &GRect(0, 77, 144, 45), &GRect(-144, 77, 144, 45));
-	animation_schedule((Animation*)ani_out);
+   ani_out = property_animation_create_layer_frame(animated_layer[active_layer], &GRect(0, 77, 144, 45), &GRect(-144, 77, 144, 45));
+   animation_schedule((Animation*)ani_out);
+   active_layer = (active_layer + 1) % (NUM_LAYERS);
+   ani_in = property_animation_create_layer_frame(animated_layer[active_layer], &GRect(144, 77, 144, 45), &GRect(0, 77, 144, 45));
+   animation_schedule((Animation*)ani_in);
+  
+}
 
+static void up_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
 
-	active_layer = (active_layer + 1) % (NUM_LAYERS);
+}
 
+static void up_long_click_handler(ClickRecognizerRef recognizer, void *context) {
 
-	ani_in = property_animation_create_layer_frame(animated_layer[active_layer], &GRect(144, 77, 144, 45), &GRect(0, 77, 144, 45));
-	animation_schedule((Animation*)ani_in);
-
+ switch (active_layer) {
+  case MUSIC_LAYER :
+   sendCommand(SM_PREVIOUS_TRACK_KEY);
+ }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-	sendCommand(SM_OPEN_SIRI_KEY);
+
+switch (active_layer) {
+  case WEATHER_LAYER :
+  sendCommand(SM_OPEN_SIRI_KEY);
+  case CALENDAR_LAYER :
+  sendCommand(SM_OPEN_SIRI_KEY);
+  case MUSIC_LAYER :
+  sendCommand(SM_VOLUME_UP_KEY);
+  }
+
+}
+
+static void down_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
+
+}
+
+static void down_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+
+ switch (active_layer) {
+  case MUSIC_LAYER :
+   sendCommand(SM_NEXT_TRACK_KEY);
+ }
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-	text_layer_set_text(text_weather_cond_layer, "Updating..." ); 	
-	
-	sendCommandInt(SM_SCREEN_ENTER_KEY, STATUS_SCREEN_APP);
+
+ switch (active_layer) {
+  case WEATHER_LAYER :	
+  text_layer_set_text(text_weather_cond_layer, "Updating..." ); 	
+  sendCommandInt(SM_SCREEN_ENTER_KEY, STATUS_SCREEN_APP);
+  case CALENDAR_LAYER :
+  text_layer_set_text(text_weather_cond_layer, "Updating..." ); 	
+  sendCommandInt(SM_SCREEN_ENTER_KEY, STATUS_SCREEN_APP);
+  case MUSIC_LAYER :
+  sendCommand(SM_VOLUME_DOWN_KEY);
+  }
 }
 
 static void click_config_provider(void *context) {
 
-
+  window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler);
+  
+  window_long_click_subscribe(BUTTON_ID_SELECT, 700, select_long_click_handler, select_long_click_release_handler);
+ 
+  window_long_click_subscribe(BUTTON_ID_UP, 700, up_long_click_handler, up_long_click_release_handler);
+ 
+ window_long_click_subscribe(BUTTON_ID_DOWN, 700, down_long_click_handler, down_long_click_release_handler);
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
@@ -575,3 +634,4 @@ int main(void) {
 
   deinit();
 }
+
