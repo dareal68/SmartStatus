@@ -220,11 +220,6 @@ light_enable_interaction();
 
 }
 
-static void back_multi_click_handler(ClickRecognizerRef recognizer, void *context) {
-
-sendCommandInt(SM_SCREEN_EXIT_KEY, STATUS_SCREEN_APP);
-
-}
 
 static void select_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {
 
@@ -302,8 +297,7 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
 static void click_config_provider(void *context) {
 
   window_single_click_subscribe(BUTTON_ID_BACK, back_click_handler);
-
-window_multi_click_subscribe(BUTTON_ID_BACK, 2, 2, 1, back_multi_click_handler);  
+  
   window_long_click_subscribe(BUTTON_ID_SELECT, 700, select_long_click_handler, select_long_click_release_handler);
  
   window_long_click_subscribe(BUTTON_ID_UP, 700, up_long_click_handler, up_long_click_release_handler);
@@ -640,4 +634,3 @@ int main(void) {
 
   deinit();
 }
-
