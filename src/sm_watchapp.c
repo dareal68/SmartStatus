@@ -216,7 +216,7 @@ void rcv(DictionaryIterator *received, void *context) {
 
 static void back_click_handler(ClickRecognizerRef recognizer, void *context) {
 
-//light_enable_interaction();
+deinit();
 
 }
 
